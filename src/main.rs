@@ -1,12 +1,19 @@
-use axum::{routing::get, Router};
+use axum::{
+    routing::{get, post},
+    Router,
+};
 
-async fn hello() -> &'static str {
-    "Hello from Rust API 🚀"
-}
+mod handler;
+mod service;
+mod repository;
+mod model;
+
+use handler::user_handler::{get_users, create_user};
 
 #[tokio::main]
 async fn main() {
-    let app = Router::new().route("/hello", get(hello));
+    let app = Router::new()
+        .route("/users", get(get_users).post(create_user));
 
     println!("Server running at http://localhost:3000");
 
