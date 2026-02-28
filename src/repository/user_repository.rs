@@ -1,12 +1,27 @@
+use sqlx::{Pool, Postgres};
 use crate::model::user::User;
 
-pub fn find_all() -> Vec<User> {
-    vec![
-        User { id: 1, name: "Budi".to_string() },
-        User { id: 2, name: "Andi".to_string() },
-    ]
+pub async fn find_all(pool: &Pool<Postgres>) -> Vec<User> {
+    sqlx::query_as!(
+        User,
+        "SELECT id, name FROM users"
+    )
+        .fetch_all(pool)
+        .await
+        .unwrap()
 }
 
-pub fn save(user: User) -> User {
-    user
+pub async fn save(pool: &Pool<Postgres>, user: User) -> User {
+    let rec = sqlx::query!(
+        "INSERT INTO users (name) VALUES ($1) RETURNING id, name",
+        user.name
+    )
+        .fetch_one(pool)
+        .await
+        .unwrap();
+
+    User {
+        id: rec.id,
+        name: rec.name,
+    }
 }
