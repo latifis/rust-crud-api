@@ -11,7 +11,7 @@ mod model;
 mod config;
 pub mod dto;
 
-use handler::user_handler::{get_users, create_user};
+use handler::user_handler::{get_users, create_user, update_user};
 use config::db::connect_db;
 
 #[tokio::main]
@@ -22,7 +22,7 @@ async fn main() {
     let db = connect_db(&db_url).await;
 
     let app = Router::new()
-        .route("/users", get(get_users).post(create_user))
+        .route("/users", get(get_users).post(create_user).put(update_user))
         .with_state(db);
 
     println!("Server running at http://localhost:3000");
