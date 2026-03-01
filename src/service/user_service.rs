@@ -1,4 +1,5 @@
 use sqlx::{Pool, Postgres};
+use crate::dto::create_user_request::CreateUserRequest;
 use crate::model::user::User;
 use crate::repository::user_repository;
 
@@ -8,6 +9,10 @@ pub async fn get_all_users(
     user_repository::find_all(pool).await
 }
 
-pub async fn create_user(pool: &Pool<Postgres>, user: User) -> User {
+pub async fn create_user(
+    pool: &Pool<Postgres>,
+    user: CreateUserRequest
+) -> Result<User, sqlx::Error> {
+
     user_repository::save(pool, user).await
 }

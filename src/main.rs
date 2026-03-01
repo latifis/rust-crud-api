@@ -9,6 +9,7 @@ mod service;
 mod repository;
 mod model;
 mod config;
+pub mod dto;
 
 use handler::user_handler::{get_users, create_user};
 use config::db::connect_db;
