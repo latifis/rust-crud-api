@@ -1,4 +1,5 @@
 use axum::{extract::State, Json};
+use axum::http::StatusCode;
 use sqlx::{Pool, Postgres};
 
 use crate::model::user::User;
@@ -6,9 +7,13 @@ use crate::service::user_service;
 
 pub async fn get_users(
     State(pool): State<Pool<Postgres>>
-) -> Json<Vec<User>> {
-    let users = user_service::get_all_users(&pool).await;
-    Json(users)
+) -> Result<Json<Vec<User>>, StatusCode> {
+
+    let users = user_service::get_all_users(&pool)
+        .await
+        .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
+
+    Ok(Json(users))
 }
 
 pub async fn create_user(

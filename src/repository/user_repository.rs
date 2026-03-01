@@ -1,14 +1,15 @@
 use sqlx::{Pool, Postgres};
 use crate::model::user::User;
 
-pub async fn find_all(pool: &Pool<Postgres>) -> Vec<User> {
-    sqlx::query_as!(
+pub async fn find_all(pool: &Pool<Postgres>) -> Result<Vec<User>, sqlx::Error> {
+    let users = sqlx::query_as!(
         User,
         "SELECT id, name FROM users"
     )
         .fetch_all(pool)
-        .await
-        .unwrap()
+        .await?;
+
+    Ok(users)
 }
 
 pub async fn save(pool: &Pool<Postgres>, user: User) -> User {
